@@ -29,6 +29,7 @@ async function run() {
         const cfProjectCollection = client.db("cfProjectDB").collection("project");
         const userCollection = client.db("cfUserDB").collection("users");
 
+
         app.get('/project', async (req, res) => {
             const cursor = cfProjectCollection.find();
             const result = await cursor.toArray();
@@ -56,6 +57,18 @@ async function run() {
             res.send(result);
         })
 
+
+        //my campaign part
+        app.get('/project/users/:email', async (req, res) => {
+            const email = req.params.email;
+            console.log(email);
+            const query = { email: email };
+            console.log(query);
+            const result = await cfProjectCollection.find(query).toArray();
+            res.send(result);
+        });
+
+
         //user part
         app.get('/users', async (req, res) => {
             const cursor = userCollection.find();
@@ -67,6 +80,18 @@ async function run() {
             const newUser = req.body;
             console.log(newUser);
             const result = await userCollection.insertOne(newUser)
+            res.send(result);
+        })
+
+        app.patch('/users', async (req, res) => {
+            const email = req.body.email;
+            const filter = { email };
+            const updatedDoc = {
+                $set: {
+                    lastSignInTime: req.body?.lastSignInTime
+                }
+            }
+            const result = await userCollection.updateOne(filter, updatedDoc);
             res.send(result);
         })
 
