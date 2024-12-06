@@ -57,13 +57,34 @@ async function run() {
             res.send(result);
         })
 
+        //update
+        app.put('/project/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) }
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: req.body
+            };
+
+            const result = await cfProjectCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        })
+
+        //delete
+        app.delete('/project/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await cfProjectCollection.deleteOne(query);
+            res.send(result);
+        })
+
 
         //my campaign part
         app.get('/project/users/:email', async (req, res) => {
             const email = req.params.email;
-            console.log(email);
+
             const query = { email: email };
-            console.log(query);
+
             const result = await cfProjectCollection.find(query).toArray();
             res.send(result);
         });
