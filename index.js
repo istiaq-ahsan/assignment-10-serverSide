@@ -28,6 +28,7 @@ async function run() {
 
         const cfProjectCollection = client.db("cfProjectDB").collection("project");
         const userCollection = client.db("cfUserDB").collection("users");
+        const cfDonatedCollection = client.db("cfDonatedDB").collection("donations");
 
 
         app.get('/project', async (req, res) => {
@@ -38,7 +39,6 @@ async function run() {
 
         app.post('/project', async (req, res) => {
             const newProjectInfo = req.body;
-            console.log(newProjectInfo);
             const result = await cfProjectCollection.insertOne(newProjectInfo);
             res.send(result);
         })
@@ -52,7 +52,6 @@ async function run() {
 
         app.post('/project/:id', async (req, res) => {
             const newProjectInfo = req.body;
-            console.log(newProjectInfo);
             const result = await cfProjectCollection.insertOne(newProjectInfo);
             res.send(result);
         })
@@ -82,12 +81,27 @@ async function run() {
         //my campaign part
         app.get('/project/users/:email', async (req, res) => {
             const email = req.params.email;
-
             const query = { email: email };
-
             const result = await cfProjectCollection.find(query).toArray();
             res.send(result);
         });
+
+        //my Donation part 
+        app.get('/donations', async (req, res) => {
+            const cursor = cfDonatedCollection.find();
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
+
+        app.post('/donations', async (req, res) => {
+            const newDonatedProjectInfo = req.body;
+            const result = await cfDonatedCollection.insertOne(newDonatedProjectInfo);
+            res.send(result);
+        })
+
+
+
 
 
         //user part
@@ -99,7 +113,6 @@ async function run() {
 
         app.post('/users', async (req, res) => {
             const newUser = req.body;
-            console.log(newUser);
             const result = await userCollection.insertOne(newUser)
             res.send(result);
         })
